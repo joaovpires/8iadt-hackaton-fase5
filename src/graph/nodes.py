@@ -7,8 +7,12 @@ llm = get_llm()
 def rotear_intencao(state: SDRState) -> SDRState:
     """Identifica se é compra/aluguel ou investimento e decide o próximo nó."""
     prompt = f"""
-    Classifique a intenção do lead como "compra_aluguel" ou "investimento"
-    com base na mensagem: "{state['mensagem_atual']}"
+    Classifique a intenção do lead como "compra_aluguel" ou "investimento",
+    considerando o contexto completo da conversa, não apenas a última mensagem.
+    
+    Histórico da conversa: {state['historico']}
+    Última mensagem do lead: "{state['mensagem_atual']}"
+
     Responda apenas com uma das duas palavras.
     """
     resposta = llm.invoke(prompt).content.strip().lower()
