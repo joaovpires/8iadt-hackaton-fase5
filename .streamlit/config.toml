@@ -1,0 +1,33 @@
+[theme]
+base = "light"
+primaryColor = "#2B4BF2"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F4F6FB"
+textColor = "#14171F"
+borderColor = "#E6E9F0"
+showWidgetBorder = true
+linkColor = "#2B4BF2"
+font = "Plus Jakarta Sans:https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap, sans-serif"
+headingFont = "Plus Jakarta Sans, sans-serif"
+headingFontWeights = [800, 800, 700, 700, 600, 600]
+headingFontSizes = ["1.7rem", "1.35rem", "1.15rem", "1rem", "0.95rem", "0.9rem"]
+baseFontSize = 14
+metricValueFontSize = "1.55rem"
+metricValueFontWeight = 700
+baseRadius = "0.75rem"
+buttonRadius = "full"
+blueColor = "#2B4BF2"
+greenColor = "#12A26B"
+orangeColor = "#E8871E"
+redColor = "#E5484D"
+violetColor = "#6E56CF"
+dataframeHeaderBackgroundColor = "#F4F6FB"
+
+[theme.sidebar]
+backgroundColor = "#F7F8FB"
+
+[browser]
+gatherUsageStats = false
+
+[client]
+toolbarMode = "minimal"

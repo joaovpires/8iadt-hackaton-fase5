@@ -1,33 +1,22 @@
+from pathlib import Path
+
 import streamlit as st
-from src.graph.sdr_graph import sdr_app
 
-st.set_page_config(page_title="Agente SDR Imobiliário", layout="wide")
+from src.config import EMPRESA_NOME
+from src.observabilidade import configurar_logs
 
-if "historico" not in st.session_state:
-    st.session_state.historico = []
+configurar_logs()
 
-st.title("Agente SDR Imobiliário")
+ASSETS = Path(__file__).resolve().parent / "ui" / "assets"
 
-for msg in st.session_state.historico:
-    with st.chat_message(msg["papel"]):
-        st.write(msg["conteudo"])
+st.set_page_config(page_title=f"{EMPRESA_NOME} · Agente SDR", page_icon=str(ASSETS / "icone.svg"), layout="wide")
+st.logo(str(ASSETS / "logo.svg"), size="large")
 
-mensagem = st.chat_input("Digite sua mensagem...")
-
-if mensagem:
-    st.session_state.historico.append({"papel": "user", "conteudo": mensagem})
-    with st.chat_message("user"):
-        st.write(mensagem)
-
-    estado_inicial = {
-        "lead_id": "teste-001",
-        "mensagem_atual": mensagem,
-        "historico": st.session_state.historico,
-    }
-
-    resultado = sdr_app.invoke(estado_inicial)
-    resposta = resultado.get("resposta_final", "Desculpe, não consegui responder.")
-
-    st.session_state.historico.append({"papel": "assistant", "conteudo": resposta})
-    with st.chat_message("assistant"):
-        st.write(resposta)
+pagina = st.navigation(
+    [
+        st.Page("ui/atendimento.py", title="Fale com a Lia", icon=":material/chat:", default=True),
+        st.Page("ui/dashboard.py", title="Painel do corretor", icon=":material/monitoring:"),
+    ],
+    position="top",
+)
+pagina.run()

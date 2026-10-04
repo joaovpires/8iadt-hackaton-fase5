@@ -1,0 +1,8 @@
+- Imobiliária fictícia criada para esta prova de conceito, com atuação na cidade de São Paulo (zonas sul, oeste, norte, leste e centro).
+- Trabalha com venda, locação e assessoria para investidores (residencial e comercial).
+- Atendimento dos corretores: segunda a sexta das 9h às 18h e sábado das 9h às 13h. A assistente virtual atende 24 horas.
+- Visitas são sempre acompanhadas por um corretor. Reuniões com a especialista em investimentos podem ser presenciais no escritório ou por vídeo.
+- Compra: aceitamos pagamento à vista, financiamento bancário (temos parceria com os principais bancos para simulação gratuita), uso de FGTS e consórcio contemplado. Taxas e aprovação de crédito são confirmadas pelo corretor com o banco.
+- Locação: garantias aceitas são seguro-fiança, caução de até 3 aluguéis ou título de capitalização. A análise cadastral é feita online em até 48 horas.
+- Investimento: a rentabilidade informada é uma estimativa de aluguel bruto mensal sobre o valor do imóvel, sem descontar condomínio, IPTU, vacância e impostos. Não prometemos retorno garantido.
+- Não solicitamos CPF, documentos ou dados bancários pelo chat; isso é feito pelo corretor em canal seguro, na etapa de proposta.
