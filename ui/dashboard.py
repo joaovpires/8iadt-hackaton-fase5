@@ -6,7 +6,7 @@ from src.config import FOLLOWUP_INATIVIDADE_MIN, FOLLOWUP_MAX_TENTATIVAS, llm_co
 from src.graph.nodes import humanizar_tempo
 from src.graph.state import ROTULOS_ETAPA
 from src.observabilidade import tracing_ativo
-from src.services.atendimento import atualizar_resumo
+from src.services.atendimento import atualizar_resumo, sincronizar_crm_lead
 from src.services.followup import enviar_followup, executar_followups
 from src.tools import agenda, imoveis
 from ui import estilo
@@ -34,6 +34,8 @@ NOMES_EVENTO = {
     "seguranca_bloqueio": "Tentativas de prompt injection bloqueadas",
     "resumo_gerado": "Resumos gerados sob demanda",
     "inatividade_simulada": "Inatividades simuladas (demo)",
+    "crm_sincronizado": "Leads sincronizados com o CRM",
+    "crm_falhou": "Falhas ao sincronizar com o CRM",
 }
 
 estilo.aplicar_estilo()
@@ -116,6 +118,7 @@ with aba_leads:
             "Etapa": texto_etapa(l["etapa"]),
             "Última interação": tempo_relativo(l["ultima_interacao_em"]),
             "Follow-ups": l["tentativas_followup"],
+            "CRM": "✅" if l.get("crm_sincronizado") else "—",
         }
         for l in ordenados
     ])
@@ -159,9 +162,16 @@ with aba_leads:
                 st.markdown(lead["resumo"])
             else:
                 st.caption("O resumo é gerado automaticamente quando o lead fica qualificado. Você pode gerar agora:")
-            if st.button("✨ Gerar/atualizar resumo", disabled=not llm_configurado(), help=None if llm_configurado() else "Configure a chave do modelo no .env"):
+            b1, b2 = st.columns(2)
+            if b1.button("✨ Gerar/atualizar resumo", disabled=not llm_configurado(), help=None if llm_configurado() else "Configure a chave do modelo no .env"):
                 with st.spinner("Gerando resumo…"):
                     atualizar_resumo(lead["id"], repo)
+                st.rerun()
+            rotulo_crm = "🔗 Sincronizado com o CRM" if lead.get("crm_sincronizado") else "🔗 Sincronizar com o CRM"
+            if b2.button(rotulo_crm, key="sincronizar_crm"):
+                with st.spinner("Sincronizando…"):
+                    sincronizado = sincronizar_crm_lead(lead["id"], repo)
+                st.toast("Lead sincronizado com o CRM!" if sincronizado else "Falha ao sincronizar com o CRM.", icon="🔗" if sincronizado else "⚠️")
                 st.rerun()
             if lead["imoveis_sugeridos"]:
                 st.html('<div class="secao">Imóveis apresentados</div>' + estilo.cards_imoveis(lead["imoveis_sugeridos"], grade=True, favorito=lead["dados"].get("imovel_interesse"), investimento=lead["dados"].get("intencao") == "investimento"))

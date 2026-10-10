@@ -57,7 +57,7 @@ Construído com **LangGraph** (orquestração multiagente), **OpenAI** (LLM, emb
 | **Memória conversacional** | Persistente por lead (SQLite), sobrevive a reinícios; janela das últimas 30 mensagens |
 | **Voice AI** | O cliente grava áudio no chat (transcrição com Whisper) e pode ouvir a resposta (TTS). No WhatsApp, áudios também são transcritos |
 | **WhatsApp** | Webhook Twilio com validação de assinatura (`POST /webhooks/whatsapp`) e envio ativo dos follow-ups |
-| **Integração com CRM** | CRM próprio em SQLite (leads, mensagens, reuniões, eventos), exportação CSV e API REST (`GET /leads`) para integrar com HubSpot, Pipedrive etc. |
+| **Integração com CRM** | CRM próprio em SQLite (leads, mensagens, reuniões, eventos), exportação CSV e API REST (`GET /leads`) para um CRM externo puxar os dados. Além disso, quando o lead é qualificado ou agendado, ele é sincronizado ativamente (*push*) com um CRM externo — `src/tools/crm.py`: mock local sem credenciais por padrão (`storage/crm_mock.json`) ou HubSpot de verdade com `CRM_PROVIDER=hubspot`. Também dá pra sincronizar manualmente pelo painel ou via `POST /crm/{lead_id}/sincronizar` |
 | **Observabilidade** | Logs estruturados com mascaramento de dados pessoais, latência por agente, eventos de sistema no painel e tracing opcional no LangSmith |
 | **Segurança** | Guardrail contra prompt injection antes do LLM, remoção de CPF e cartão das mensagens, PII mascarada em logs, token na API, assinatura do Twilio, regras de "não inventar" no prompt |
 | **Deploy em cloud** | Dockerfile + docker-compose (app, API e worker de follow-up); pronto para Streamlit Community Cloud, Render ou Railway |

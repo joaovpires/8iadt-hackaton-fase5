@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS leads (
     tentativas_followup INTEGER NOT NULL DEFAULT 0,
     ultimo_autor TEXT,
     ultima_interacao_em TEXT,
+    crm_sincronizado INTEGER NOT NULL DEFAULT 0,
     criado_em TEXT NOT NULL,
     atualizado_em TEXT NOT NULL
 );
@@ -60,7 +61,7 @@ CREATE INDEX IF NOT EXISTS idx_leads_followup ON leads(etapa, ultimo_autor, ulti
 CAMPOS_JSON = ("dados", "motivos_score", "imoveis_sugeridos", "horarios_ofertados")
 CAMPOS_ATUALIZAVEIS = {
     "canal", "nome", "dados", "etapa", "score", "temperatura", "motivos_score", "resumo",
-    "imoveis_sugeridos", "horarios_ofertados", "tentativas_followup",
+    "imoveis_sugeridos", "horarios_ofertados", "tentativas_followup", "crm_sincronizado",
 }
 ETAPAS_FOLLOWUP = ("em_qualificacao", "qualificado")
 
@@ -75,6 +76,10 @@ class Repositorio:
         self.caminho.parent.mkdir(parents=True, exist_ok=True)
         with self._conexao() as con:
             con.executescript(ESQUEMA)
+            try:
+                con.execute("ALTER TABLE leads ADD COLUMN crm_sincronizado INTEGER NOT NULL DEFAULT 0")
+            except sqlite3.OperationalError:
+                pass  # coluna já existe (banco criado antes deste campo)
 
     @contextmanager
     def _conexao(self):

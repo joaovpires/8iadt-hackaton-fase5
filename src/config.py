@@ -34,6 +34,12 @@ TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
 TWILIO_WHATSAPP_FROM = os.getenv("TWILIO_WHATSAPP_FROM")
 PUBLIC_BASE_URL = os.getenv("PUBLIC_BASE_URL")
 
+# CRM externo (diferencial): "mock" grava localmente em storage/ sem precisar de credenciais;
+# "hubspot" sincroniza de verdade via API, bastando informar CRM_API_KEY
+CRM_PROVIDER = os.getenv("CRM_PROVIDER", "mock")
+CRM_API_KEY = os.getenv("CRM_API_KEY")
+CRM_BASE_URL = os.getenv("CRM_BASE_URL", "https://api.hubapi.com")
+
 
 def llm_configurado() -> bool:
     return bool(LLM_API_KEY)
@@ -49,3 +55,7 @@ def transcricao_disponivel() -> bool:
 
 def voz_disponivel() -> bool:
     return llm_configurado() and bool(TTS_MODEL)
+
+
+def crm_configurado() -> bool:
+    return CRM_PROVIDER == "mock" or bool(CRM_API_KEY)

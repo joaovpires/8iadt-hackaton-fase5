@@ -4,11 +4,12 @@ from dataclasses import dataclass
 from time import perf_counter
 from uuid import uuid4
 
-from src.config import HISTORICO_MAX_MENSAGENS
+from src.config import CRM_PROVIDER, HISTORICO_MAX_MENSAGENS
 from src.graph.nodes import gerar_resumo
 from src.graph.sdr_graph import sdr_app
 from src.memory.repositorio import Repositorio, get_repositorio
 from src.security.guardrails import sanitizar
+from src.tools import crm
 
 logger = logging.getLogger(__name__)
 
@@ -105,9 +106,25 @@ def persistir_resultado(repo: Repositorio, lead_anterior: dict, resultado: dict)
     }
     if resultado.get("resumo_corretor"):
         campos["resumo"] = resultado["resumo_corretor"]
+    etapa_mudou = resultado["etapa"] != lead_anterior["etapa"]
+    if etapa_mudou and resultado["etapa"] in ("qualificado", "agendado"):
+        lead_para_crm = {**lead_anterior, "dados": resultado["lead"], "etapa": resultado["etapa"], "score": resultado["score"]}
+        campos["crm_sincronizado"] = int(crm.sincronizar(lead_para_crm))
     repo.atualizar_lead(lead_anterior["id"], **campos)
-    if resultado["etapa"] != lead_anterior["etapa"]:
+    if etapa_mudou:
         repo.registrar_evento(lead_anterior["id"], "etapa_alterada", f"{lead_anterior['etapa']} -> {resultado['etapa']}")
+        if campos.get("crm_sincronizado"):
+            repo.registrar_evento(lead_anterior["id"], "crm_sincronizado", CRM_PROVIDER)
+
+
+def sincronizar_crm_lead(lead_id: str, repo: Repositorio | None = None) -> bool:
+    """Sincroniza o lead com o CRM sob demanda (botão do painel do corretor)."""
+    repo = repo or get_repositorio()
+    lead = repo.obter_lead(lead_id)
+    ok = crm.sincronizar(lead)
+    repo.atualizar_lead(lead_id, crm_sincronizado=int(ok))
+    repo.registrar_evento(lead_id, "crm_sincronizado" if ok else "crm_falhou", CRM_PROVIDER)
+    return ok
 
 
 def atualizar_resumo(lead_id: str, repo: Repositorio | None = None) -> str:

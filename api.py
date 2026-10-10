@@ -10,7 +10,7 @@ from src.config import API_TOKEN, PUBLIC_BASE_URL, llm_configurado, transcricao_
 from src.llm import client
 from src.memory.repositorio import get_repositorio
 from src.observabilidade import configurar_logs
-from src.services.atendimento import processar_mensagem
+from src.services.atendimento import processar_mensagem, sincronizar_crm_lead
 from src.services.followup import executar_followups
 
 configurar_logs()
@@ -66,6 +66,11 @@ def listar_leads() -> list[dict]:
 @app.post("/followups/executar", dependencies=[Depends(exigir_token)])
 def rodar_followups() -> dict:
     return executar_followups()
+
+
+@app.post("/crm/{lead_id}/sincronizar", dependencies=[Depends(exigir_token)])
+def sincronizar_crm(lead_id: str) -> dict:
+    return {"lead_id": lead_id, "sincronizado": sincronizar_crm_lead(lead_id)}
 
 
 @app.post("/webhooks/whatsapp")

@@ -22,6 +22,7 @@ flowchart LR
         RAG[Busca de imóveis<br/>filtros + embeddings]
         AG[Agenda]
         SC[Score]
+        CRM[Sincronização CRM<br/>mock ou HubSpot]
     end
     subgraph Dados
         DB[(SQLite<br/>leads · mensagens · reuniões · eventos)]
@@ -43,6 +44,7 @@ flowchart LR
     RAG --> EMB
     G --> AG
     G --> SC
+    SVC -- lead qualificado/agendado --> CRM
     G --> OAI
     G -.-> LS
     SVC --> DB
@@ -60,8 +62,6 @@ flowchart LR
 | Ferramentas | Funções determinísticas usadas pelos agentes | `src/tools/`, `src/services/score.py`, `src/security/` |
 | Dados | Memória conversacional, CRM e base de imóveis | `src/memory/repositorio.py`, `src/data/` |
 | Painel | Visão do corretor (somente leitura + ações de demo) | `ui/dashboard.py` |
-
-## O grafo de agentes
 
 ```mermaid
 flowchart TD
@@ -174,6 +174,15 @@ sequenceDiagram
     W->>DB: leads com 3 tentativas sem resposta → etapa "perdido"
     Note over DB: Se o lead responder, tentativas voltam a 0<br/>e a conversa segue com todo o contexto
 ```
+
+## Integração com CRM externo
+
+O SQLite já funciona como o CRM interno (leads, histórico, reuniões, eventos), exposto via `GET /leads` para um CRM externo puxar os dados. `src/tools/crm.py` complementa isso com um *push* ativo: quando `services/atendimento.py` detecta que o lead mudou para `qualificado` ou `agendado`, ele chama `crm.sincronizar(lead)`, que:
+
+- por padrão (`CRM_PROVIDER=mock`) grava/atualiza o lead em `storage/crm_mock.json`, sem precisar de nenhuma credencial — assim a demo funciona offline;
+- com `CRM_PROVIDER=hubspot` e `CRM_API_KEY`, envia o lead de verdade para a API de Contatos do HubSpot.
+
+A sincronização nunca lança exceção (falhas são logadas e registradas como evento `crm_falhou`), então uma instabilidade no CRM externo nunca derruba o atendimento ao cliente. O corretor também pode forçar a sincronização manualmente pelo painel (botão "Sincronizar com o CRM") ou via `POST /crm/{lead_id}/sincronizar`.
 
 ## Escalabilidade
 

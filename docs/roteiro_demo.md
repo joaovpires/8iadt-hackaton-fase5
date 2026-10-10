@@ -49,7 +49,7 @@ Clique em **Nova conversa**.
 ## Cena 4 — Painel do corretor (≈ 1 min)
 - KPIs: leads, quentes, agendados, conversão e tempo médio de resposta.
 - Funil por etapa e temperatura dos leads.
-- Aba **Leads (CRM)**: clique na Ana → dados coletados, **por que esse score** e **resumo para o corretor** gerado automaticamente. Mostre **Exportar CRM (CSV)**.
+- Aba **Leads (CRM)**: clique na Ana → dados coletados, **por que esse score** e **resumo para o corretor** gerado automaticamente. Mostre **Exportar CRM (CSV)** e o botão **Sincronizar com o CRM** (grava em `storage/crm_mock.json` ou no HubSpot, se configurado).
 - Aba **Agenda**: a visita da Ana e a reunião de investimento.
 
 ## Cena 5 — Segurança e observabilidade (≈ 30 s)
@@ -60,4 +60,4 @@ Clique em **Nova conversa**.
 ## Extras (se houver tempo)
 - **Voz (só com OpenAI):** grave um áudio pelo microfone do campo de chat ("quero alugar um studio perto da Paulista").
 - **API:** `uvicorn api:app` e mostre `http://localhost:8000/docs`.
-- **Testes:** `pytest` → 28 testes passando.
+- **Testes:** `pytest` → 38 testes passando.
