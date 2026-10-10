@@ -1,6 +1,13 @@
-langgraph
-langchain
-langchain-openai
-streamlit
+langgraph>=1.0
+langchain>=1.0
+langchain-openai>=1.0
+openai>=1.50
+streamlit>=1.65
+altair>=5
 pandas
 python-dotenv
+pydantic>=2
+fastapi
+uvicorn[standard]
+python-multipart
+httpx
